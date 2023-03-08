@@ -134,7 +134,7 @@ void setColour() {
     lcd.setCursor(0, 1);
     lcd.print("Set B:");
     lcd.setCursor(7, 1);
-    lcd.print(colourSet);
+    lcd.print(B);
     currentState = digitalRead(CLK);  // Current state of the encoder
     if (currentState != lastState && currentState == 1) {
       if (digitalRead(DT) != currentState) {
