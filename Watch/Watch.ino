@@ -18,9 +18,11 @@ uint8_t menuSelect = 1;
 int currentState;
 int lastState;
 
+bool menuOpen = true;
 bool menuR = true;
 bool menuG = true;
 bool menuB = true;
+
 
 rgb_lcd lcd;
 DS1307 rtc;
@@ -67,6 +69,7 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  menuOpen = true;
   menuR = true;
   menuG = true;
   menuB = true;  // resets backlight colour menu
@@ -108,24 +111,22 @@ void counterMenu(){
 
 void selectMenu(){
   lcd.clear();
-  bool menuOpen = true;
   lcd.setCursor(1,0);
   lcd.print("Colour Set");
   lcd.setCursor(1,1);
   lcd.print("Stop Watch");
   while (menuOpen == true){
-    while (menuSelect < 3){
       counterMenu();
       if (menuSelect == 1){
         lcd.setCursor(0, 1);
-        lcd.write(1);
+        lcd.write(1); // writes an empty character to clear 0,1
         lcd.setCursor(0, 0);
         lcd.write(2);
       }
       if (menuSelect == 2){
         lcd.setCursor(0, 0);
-        lcd.write(1);
-        lcd.setCursor(0,1);
+        lcd.write(1); // writes an empty character to clear 0,0 
+        lcd.setCursor(0,1); 
         lcd.write(2);
       }
       if (menuSelect == 0){
@@ -140,7 +141,7 @@ void selectMenu(){
       }
     }
   }
-}
+
 
 
 void setColour() {
