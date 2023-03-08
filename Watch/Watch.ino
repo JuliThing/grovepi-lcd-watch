@@ -135,6 +135,7 @@ void selectMenu(){
         menuSelect = 1;
       }
       if (digitalRead(SW) == LOW && menuSelect == 1){
+        menuOpen = false;
         setColour();
       }
     }
