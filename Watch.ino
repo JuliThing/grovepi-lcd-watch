@@ -6,9 +6,9 @@
 #define DT 3
 #define SW 4
 
-unsigned long initialPress; // initial start for the timer
-unsigned long noPress; // time after the button is let go
-const unsigned long period = 2000; //2 seconds in millisec form
+unsigned long initialPress;         // initial start for the timer
+unsigned long noPress;              // time after the button is let go
+const unsigned long period = 2000;  //2 seconds in millisec form
 
 uint8_t colourR = 0;
 uint8_t colourG = 0;
@@ -43,7 +43,7 @@ void loop() {
   // put your main code here, to run repeatedly:
   menuR = true;
   menuG = true;
-  menuB = true; // resets backlight colour menu
+  menuB = true;  // resets backlight colour menu
   uint8_t sec, min, hour, day, month;
   uint16_t year;
 
@@ -59,11 +59,11 @@ void loop() {
   lcd.setCursor(0, 1);
   lcd.print(Date);
 
-  while (digitalRead(SW) == LOW) { 
+  while (digitalRead(SW) == LOW) {
     initialPress = millis();
-    if (digitalRead(SW) == HIGH && initialPress > 2000){ // calculates the millisecs taken from press to release
-      setColour();
+    if (digitalRead(SW) == HIGH && initialPress > 2000) {  // calculates the millisecs taken from press to release
       initialPress = 0;
+      setColour();
     }
   }
 }
@@ -85,8 +85,8 @@ void setColour() {
     lcd.print("Set R:");
     lcd.setCursor(7, 1);
     lcd.print(R);
-    currentState = digitalRead(CLK);  // Current state of the encoder
-    if (currentState != lastState && currentState == 1){ // compares it once not to have ultra stroke mode
+    currentState = digitalRead(CLK);                       // Current state of the encoder
+    if (currentState != lastState && currentState == 1) {  // compares it once not to have ultra stroke mode
       if (digitalRead(DT) != currentState) {
         colourSet++;
       } else {
@@ -111,7 +111,7 @@ void setColour() {
     lcd.setCursor(7, 1);
     lcd.print(G);
     currentState = digitalRead(CLK);  // Current state of the encoder
-    if (currentState != lastState && currentState == 1){
+    if (currentState != lastState && currentState == 1) {
       if (digitalRead(DT) != currentState) {
         colourSet++;
       } else {
@@ -134,9 +134,9 @@ void setColour() {
     lcd.setCursor(0, 1);
     lcd.print("Set B:");
     lcd.setCursor(7, 1);
-    lcd.print(B);
+    lcd.print(colourSet);
     currentState = digitalRead(CLK);  // Current state of the encoder
-    if (currentState != lastState && currentState == 1){
+    if (currentState != lastState && currentState == 1) {
       if (digitalRead(DT) != currentState) {
         colourSet++;
       } else {
