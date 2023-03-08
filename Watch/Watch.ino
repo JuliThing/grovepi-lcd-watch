@@ -14,6 +14,7 @@ uint8_t colourR = 0;
 uint8_t colourG = 0;
 uint8_t colourB = 0;
 uint8_t colourSet = 0;
+uint8_t menuSelect = 1;
 int currentState;
 int lastState;
 
@@ -24,6 +25,28 @@ bool menuB = true;
 rgb_lcd lcd;
 DS1307 rtc;
 
+byte blank[8] = { //creates an arrow icon 
+  0b00000,
+  0b00000,
+  0b00000,
+  0b00000,
+  0b00000,
+  0b00000,
+  0b00000,
+  0b00000
+};
+
+byte arrow[8] = { //creates an arrow icon 
+  0b00000,
+  0b00100,
+  0b00010,
+  0b11111,
+  0b00010,
+  0b00100,
+  0b00000,
+  0b00000
+};
+
 void setup() {
   // put your setup code here, to run once:
   pinMode(CLK, INPUT);
@@ -31,10 +54,13 @@ void setup() {
   pinMode(SW, INPUT_PULLUP);
   lcd.begin(16, 2);
   lcd.setRGB(colourR, colourG, colourB);
+  lcd.createChar(1, blank); // creates an empty icon
+  lcd.createChar(2, arrow); // turns the custom arrow icon into a character
   rtc.begin();  //starts rtc
   rtc.start();
+  lcd.setCursor(0, 0);
   lcd.print("Take your time");
-  delay(500);
+  delay(1000);
   lcd.clear();
   lastState = digitalRead(CLK);  // reads the initial state of the encoder
 }
@@ -63,7 +89,54 @@ void loop() {
     initialPress = millis();
     if (digitalRead(SW) == HIGH && initialPress > 2000) {  // calculates the millisecs taken from press to release
       initialPress = 0;
-      setColour();
+      selectMenu();
+    }
+  }
+}
+
+void counterMenu(){
+  currentState = digitalRead(CLK);                       // Current state of the encoder
+    if (currentState != lastState && currentState == 1) {  // compares it once not to have ultra stroke mode
+      if (digitalRead(DT) != currentState) {
+        menuSelect++;
+      } else {
+        menuSelect--;
+      }
+    }
+    lastState = currentState;
+}
+
+void selectMenu(){
+  lcd.clear();
+  bool menuOpen = true;
+  lcd.setCursor(1,0);
+  lcd.print("Colour Set");
+  lcd.setCursor(1,1);
+  lcd.print("Stop Watch");
+  while (menuOpen == true){
+    while (menuSelect < 3){
+      counterMenu();
+      if (menuSelect == 1){
+        lcd.setCursor(0, 1);
+        lcd.write(1);
+        lcd.setCursor(0, 0);
+        lcd.write(2);
+      }
+      if (menuSelect == 2){
+        lcd.setCursor(0, 0);
+        lcd.write(1);
+        lcd.setCursor(0,1);
+        lcd.write(2);
+      }
+      if (menuSelect == 0){
+        menuSelect = 2;
+      }
+      if (menuSelect > 2){
+        menuSelect = 1;
+      }
+      if (digitalRead(SW) == LOW && menuSelect == 1){
+        setColour();
+      }
     }
   }
 }
@@ -88,9 +161,9 @@ void setColour() {
     currentState = digitalRead(CLK);                       // Current state of the encoder
     if (currentState != lastState && currentState == 1) {  // compares it once not to have ultra stroke mode
       if (digitalRead(DT) != currentState) {
-        colourSet++;
+        colourSet+=5;
       } else {
-        colourSet--;
+        colourSet-=5;
       }
     }
     lastState = currentState;
