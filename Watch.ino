@@ -59,10 +59,11 @@ void loop() {
   lcd.setCursor(0, 1);
   lcd.print(Date);
 
-  if (digitalRead(SW) == LOW) { 
+  while (digitalRead(SW) == LOW) { 
     initialPress = millis();
-    if (digitalRead(SW) == HIGH && initialPress - noPress > 2000){ // calculates the millisecs taken from press to release
+    if (digitalRead(SW) == HIGH && initialPress > 2000){ // calculates the millisecs taken from press to release
       setColour();
+      initialPress = 0;
     }
   }
 }
@@ -71,15 +72,19 @@ void loop() {
 void setColour() {
   lcd.clear();
   char Colour[16];
+  char R[3];
+  char G[3];
+  char B[3];
   delay(250);
   while (menuR == true) {                                       // loop to change the value of R
     sprintf(Colour, "R%d G%d B%d", colourR, colourG, colourB);  //formats the colour values
+    sprintf(R, "%03d", colourSet);
     lcd.setCursor(0, 0);
     lcd.print(Colour);
     lcd.setCursor(0, 1);
     lcd.print("Set R:");
     lcd.setCursor(7, 1);
-    lcd.print(colourSet);
+    lcd.print(R);
     currentState = digitalRead(CLK);  // Current state of the encoder
     if (currentState != lastState && currentState == 1){ // compares it once not to have ultra stroke mode
       if (digitalRead(DT) != currentState) {
@@ -88,7 +93,6 @@ void setColour() {
         colourSet--;
       }
     }
-    delay(25);
     lastState = currentState;
     if (digitalRead(SW) == LOW) {
       colourR = colourSet;
@@ -99,12 +103,13 @@ void setColour() {
   delay(250);
   while (menuG == true) {                                       // loop to change the value of G
     sprintf(Colour, "R%d G%d B%d", colourR, colourG, colourB);  //formats the colour values
+    sprintf(G, "%03d", colourSet);
     lcd.setCursor(0, 0);
     lcd.print(Colour);
     lcd.setCursor(0, 1);
     lcd.print("Set G:");
     lcd.setCursor(7, 1);
-    lcd.print(colourSet);
+    lcd.print(G);
     currentState = digitalRead(CLK);  // Current state of the encoder
     if (currentState != lastState && currentState == 1){
       if (digitalRead(DT) != currentState) {
@@ -113,7 +118,6 @@ void setColour() {
         colourSet--;
       }
     }
-    delay(25);
     lastState = currentState;
     if (digitalRead(SW) == LOW) {
       colourG = colourSet;
@@ -124,12 +128,13 @@ void setColour() {
   delay(250);
   while (menuB == true) {                                       // loop to change the value of B
     sprintf(Colour, "R%d G%d B%d", colourR, colourG, colourB);  //formats the colour values
+    sprintf(B, "%03d", colourSet);
     lcd.setCursor(0, 0);
     lcd.print(Colour);
     lcd.setCursor(0, 1);
     lcd.print("Set B:");
     lcd.setCursor(7, 1);
-    lcd.print(colourSet);
+    lcd.print(B);
     currentState = digitalRead(CLK);  // Current state of the encoder
     if (currentState != lastState && currentState == 1){
       if (digitalRead(DT) != currentState) {
@@ -138,7 +143,6 @@ void setColour() {
         colourSet--;
       }
     }
-    delay(25);
     lastState = currentState;
     if (digitalRead(SW) == LOW) {
       colourB = colourSet;
