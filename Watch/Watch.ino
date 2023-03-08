@@ -1,6 +1,4 @@
 // Somehow written by Juli/ JuliThing (on GH)
-#include "sam.h"
-#include "Clock_Control.h"
 #include <Wire.h>
 #include "rgb_lcd.h"
 #include <DS1307.h>
