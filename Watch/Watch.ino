@@ -1,4 +1,5 @@
-// Somehow written by Juli/ JuliThing (on GH)
+// somehow written by Juli / JuliThing (GH)
+#include <CapacitiveSensor.h>
 #include <ArduinoLowPower.h>
 #include <StopWatch.h>
 #include <Wire.h>
@@ -133,6 +134,65 @@ void colourVal(){
     lastState = currentState;
 }
 
+void setColour() {
+  lcd.clear();
+  char Colour[16];
+  char R[3];
+  char G[3];
+  char B[3];
+  delay(250);
+  while (menuR == true) {                                       // loop to change the value of R
+    sprintf(Colour, "R%d G%d B%d", colourR, colourG, colourB);  //formats the colour values
+    sprintf(R, "%03d", colourSet);
+    lcd.setCursor(0, 0);
+    lcd.print(Colour);
+    lcd.setCursor(0, 1);
+    lcd.print("Set R:");
+    lcd.setCursor(7, 1);
+    lcd.print(R);
+    colourVal();
+    if (digitalRead(SW) == LOW) {
+      colourR = colourSet;
+      lcd.setRGB(colourR, colourG, colourB);
+      menuR = false;
+    }
+  }
+  delay(250);
+  while (menuG == true) {                                       // loop to change the value of G
+    sprintf(Colour, "R%d G%d B%d", colourR, colourG, colourB);  //formats the colour values
+    sprintf(G, "%03d", colourSet);
+    lcd.setCursor(0, 0);
+    lcd.print(Colour);
+    lcd.setCursor(0, 1);
+    lcd.print("Set G:");
+    lcd.setCursor(7, 1);
+    lcd.print(G);
+    colourVal();
+    if (digitalRead(SW) == LOW) {
+      colourG = colourSet;
+      lcd.setRGB(colourR, colourG, colourB);
+      menuG = false;
+    }
+  }
+  delay(250);
+  while (menuB == true) {                                       // loop to change the value of B
+    sprintf(Colour, "R%d G%d B%d", colourR, colourG, colourB);  //formats the colour values
+    sprintf(B, "%03d", colourSet);
+    lcd.setCursor(0, 0);
+    lcd.print(Colour);
+    lcd.setCursor(0, 1);
+    lcd.print("Set B:");
+    lcd.setCursor(7, 1);
+    lcd.print(B);
+    colourVal();
+    if (digitalRead(SW) == LOW) {
+      colourB = colourSet;
+      lcd.setRGB(colourR, colourG, colourB);
+      menuB = false;
+    }
+  }
+}
+
 void stopwatch(){
   lcd.clear();
   while (watchMenu == true){
@@ -210,71 +270,19 @@ void selectMenu(){
         menuOpen = false;
         switch(menuSelect){
           case 1;
-          setColour
+          setColour();
           break;
           case 2;
-          
+          stopwatch();
+          break;
+          case 3;
+
+          break;
+          case 4;
+          slep();
+          break;
         }
       }
-    }
-  }
-}
-  
-void setColour() {
-  lcd.clear();
-  char Colour[16];
-  char R[3];
-  char G[3];
-  char B[3];
-  delay(250);
-  while (menuR == true) {                                       // loop to change the value of R
-    sprintf(Colour, "R%d G%d B%d", colourR, colourG, colourB);  //formats the colour values
-    sprintf(R, "%03d", colourSet);
-    lcd.setCursor(0, 0);
-    lcd.print(Colour);
-    lcd.setCursor(0, 1);
-    lcd.print("Set R:");
-    lcd.setCursor(7, 1);
-    lcd.print(R);
-    colourVal();
-    if (digitalRead(SW) == LOW) {
-      colourR = colourSet;
-      lcd.setRGB(colourR, colourG, colourB);
-      menuR = false;
-    }
-  }
-  delay(250);
-  while (menuG == true) {                                       // loop to change the value of G
-    sprintf(Colour, "R%d G%d B%d", colourR, colourG, colourB);  //formats the colour values
-    sprintf(G, "%03d", colourSet);
-    lcd.setCursor(0, 0);
-    lcd.print(Colour);
-    lcd.setCursor(0, 1);
-    lcd.print("Set G:");
-    lcd.setCursor(7, 1);
-    lcd.print(G);
-    colourVal();
-    if (digitalRead(SW) == LOW) {
-      colourG = colourSet;
-      lcd.setRGB(colourR, colourG, colourB);
-      menuG = false;
-    }
-  }
-  delay(250);
-  while (menuB == true) {                                       // loop to change the value of B
-    sprintf(Colour, "R%d G%d B%d", colourR, colourG, colourB);  //formats the colour values
-    sprintf(B, "%03d", colourSet);
-    lcd.setCursor(0, 0);
-    lcd.print(Colour);
-    lcd.setCursor(0, 1);
-    lcd.print("Set B:");
-    lcd.setCursor(7, 1);
-    lcd.print(B);
-    colourVal();
-    if (digitalRead(SW) == LOW) {
-      colourB = colourSet;
-      lcd.setRGB(colourR, colourG, colourB);
-      menuB = false;
     }
   }
 }
