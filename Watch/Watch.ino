@@ -5,13 +5,14 @@
 #include <Wire.h>
 #include <rgb_lcd.h>
 #include <DS1307.h>
-#define CLK 2
-#define DT 3
-#define SW 4
+#define CLK 3
+#define DT 4
+#define SW 2
 
 unsigned long initial;         // initial start for the timer
 unsigned long lastPress;
 const unsigned long period = 2000;  //2 seconds in millisec form
+volatile int sleepCount = 1;
 
 uint8_t colourR = 0;
 uint8_t colourG = 0;
@@ -32,6 +33,7 @@ bool menuB = true;
 rgb_lcd lcd;
 DS1307 rtc;
 StopWatch watch;
+CapacitiveSensor cs_11_9 = CapacitiveSensor(11,9); //sets pin 9 as the capacitive sensor pin
 
 byte blank[8] = { //creates an arrow icon 
   0b00000,
@@ -83,6 +85,7 @@ void loop() {
   menuB = true;  // resets backlight colour menu
   uint8_t sec, min, hour, day, month;
   uint16_t year;
+  long capButton = cs_11_9.capacitiveSensor(30); // capacitance of the button
 
   //get time from RTC
   rtc.get(&sec, &min, &hour, &day, &month, &year);
@@ -212,11 +215,12 @@ void slep(){
   lcd.clear();
   lcd.setCursor(0,0);
   lcd.print("Zzzz...");
-  LowPower.sleep(); // puts the arduino to sleep
+  delay(300);
+  LowPower.deepSleep(); // puts the arduino to sleep^2
 }
 
 void noslep(){
-  // doesn't contain anything but the low power requires a function
+  sleepCount ++; //idk why
 }
 
 void menu1(){
