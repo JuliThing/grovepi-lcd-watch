@@ -120,6 +120,9 @@ void counterMenu(){
     if (menuSelect == 5){
       menuSelect = 1;
     }
+    if (menuSelect == 0){
+        menuSelect = 4;
+    }
 }
 
 void colourVal(){
@@ -216,72 +219,69 @@ void noslep(){
   // doesn't contain anything but the low power requires a function
 }
 
-void selectMenu(){
-  if (menuSelect < 3){
-  lcd.clear();
+void menu1(){
   lcd.setCursor(1,0);
   lcd.print("Colour Set");
   lcd.setCursor(1,1);
   lcd.print("Stop Watch");
+}
+
+void menu2(){
+  lcd.setCursor(1,0);
+  lcd.print("Settings  ");
+  lcd.setCursor(1,1);
+  lcd.print("Sleep     ");
+}
+
+
+void selectMenu(){
+  lcd.clear();
   while (menuOpen == true){
-      counterMenu();
-      if (menuSelect == 1){
-        lcd.setCursor(0, 1);
-        lcd.write(1); // writes an empty character to clear 0,1
-        lcd.setCursor(0, 0);
-        lcd.write(2);
-      }
-      if (menuSelect == 2){
-        lcd.setCursor(0, 0);
-        lcd.write(1); // writes an empty character to clear 0,0 
-        lcd.setCursor(0,1); 
-        lcd.write(2);
-      }
-      if (menuSelect > 2){
-        lcd.clear();
-        lcd.setCursor(1,0);
-        lcd.print("Settings");
-        lcd.setCursor(1,1);
-        lcd.print("Sleep");
-        while(menuSelect > 2){
-          counterMenu();
-          if (menuSelect == 3){
-            lcd.setCursor(0, 1);
-            lcd.write(1); // writes an empty character to clear 0,1
-            lcd.setCursor(0, 0);
-            lcd.write(2);
-        }
-        if (menuSelect == 4){
-          lcd.setCursor(0, 0);
-          lcd.write(1); // writes an empty character to clear 0,0 
-          lcd.setCursor(0,1); 
-          lcd.write(2);  
-          }
-          }
-          if (menuSelect < 3){
-            selectMenu();
-          }
-      }
-
-      if (menuSelect == 0){
-        menuSelect = 4;
-      }
-      if (digitalRead(SW) == LOW){
-        menuOpen = false;
-        switch(menuSelect){
-          case 1:
-          setColour();
-          break;
-          case 2:
-          stopwatch();
-          break;
-          case 3:
-
-          break;
-          case 4:
-          slep();
-          break;
-        }
+    counterMenu();
+    switch(menuSelect){
+      case 1:
+      menu1();
+      lcd.setCursor(0, 1);
+      lcd.write(1); // writes an empty character to clear 0,1
+      lcd.setCursor(0, 0);
+      lcd.write(2);
+      break;
+      case 2:
+      menu1();
+      lcd.setCursor(0, 0);
+      lcd.write(1); // writes an empty character to clear 0,0 
+      lcd.setCursor(0,1); 
+      lcd.write(2);
+      break;
+      case 3:
+      menu2();
+      lcd.setCursor(0, 1);
+      lcd.write(1); // writes an empty character to clear 0,1
+      lcd.setCursor(0, 0);
+      lcd.write(2);
+      break;
+      case 4:
+      menu2();
+      lcd.setCursor(0, 0);
+      lcd.write(1); // writes an empty character to clear 0,0 
+      lcd.setCursor(0,1); 
+      lcd.write(2);  
+      break;    
+    }
+    if (digitalRead(SW) == LOW){
+      menuOpen = false;
+      switch(menuSelect){
+        case 1:
+        setColour();
+        break;
+        case 2:
+        stopwatch();
+        break;
+        case 3:
+        break;
+        case 4:
+        slep();
+        break;
       }
     }
   }
