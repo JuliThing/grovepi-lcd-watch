@@ -93,9 +93,10 @@ void loop() {
     if (digitalRead(SW) == HIGH && initialPress > 2000) {  // calculates the millisecs taken from press to release
       initialPress = 0;
       selectMenu();
+     }
     }
   }
-}
+
 
 void counterMenu(){
   currentState = digitalRead(CLK);                       // Current state of the encoder
@@ -106,6 +107,18 @@ void counterMenu(){
         menuSelect--;
       }
     }
+    lastState = currentState;
+}
+
+void colourVal(){
+  currentState = digitalRead(CLK);                       // Current state of the encoder
+  if (currentState != lastState && currentState == 1) {  // compares it once not to have ultra stroke mode
+    if (digitalRead(DT) != currentState) {
+      colourSet+=5;
+    } else {
+      colourSet-=5;
+    }
+  }
     lastState = currentState;
 }
 
@@ -167,9 +180,6 @@ void selectMenu(){
   }
 }
   
-
-
-
 void setColour() {
   lcd.clear();
   char Colour[16];
@@ -186,15 +196,7 @@ void setColour() {
     lcd.print("Set R:");
     lcd.setCursor(7, 1);
     lcd.print(R);
-    currentState = digitalRead(CLK);                       // Current state of the encoder
-    if (currentState != lastState && currentState == 1) {  // compares it once not to have ultra stroke mode
-      if (digitalRead(DT) != currentState) {
-        colourSet+=5;
-      } else {
-        colourSet-=5;
-      }
-    }
-    lastState = currentState;
+    colourVal();
     if (digitalRead(SW) == LOW) {
       colourR = colourSet;
       lcd.setRGB(colourR, colourG, colourB);
@@ -211,15 +213,7 @@ void setColour() {
     lcd.print("Set G:");
     lcd.setCursor(7, 1);
     lcd.print(G);
-    currentState = digitalRead(CLK);  // Current state of the encoder
-    if (currentState != lastState && currentState == 1) {
-      if (digitalRead(DT) != currentState) {
-        colourSet++;
-      } else {
-        colourSet--;
-      }
-    }
-    lastState = currentState;
+    colourVal();
     if (digitalRead(SW) == LOW) {
       colourG = colourSet;
       lcd.setRGB(colourR, colourG, colourB);
@@ -236,15 +230,7 @@ void setColour() {
     lcd.print("Set B:");
     lcd.setCursor(7, 1);
     lcd.print(B);
-    currentState = digitalRead(CLK);  // Current state of the encoder
-    if (currentState != lastState && currentState == 1) {
-      if (digitalRead(DT) != currentState) {
-        colourSet++;
-      } else {
-        colourSet--;
-      }
-    }
-    lastState = currentState;
+    colourVal();
     if (digitalRead(SW) == LOW) {
       colourB = colourSet;
       lcd.setRGB(colourR, colourG, colourB);
