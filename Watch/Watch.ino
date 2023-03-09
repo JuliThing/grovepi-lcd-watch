@@ -110,6 +110,7 @@ void counterMenu(){
 }
 
 void selectMenu(){
+  if (menuSelect < 3){
   lcd.clear();
   lcd.setCursor(1,0);
   lcd.print("Colour Set");
@@ -129,11 +130,34 @@ void selectMenu(){
         lcd.setCursor(0,1); 
         lcd.write(2);
       }
-      if (menuSelect == 0){
-        menuSelect = 2;
-      }
       if (menuSelect > 2){
-        menuSelect = 1;
+        lcd.clear();
+        lcd.setCursor(1,0);
+        lcd.print("Settings");
+        lcd.setCursor(1,1);
+        lcd.print("Sleep");
+        while(menuSelect > 2){
+          counterMenu();
+          if (menuSelect == 3){
+            lcd.setCursor(0, 1);
+            lcd.write(1); // writes an empty character to clear 0,1
+            lcd.setCursor(0, 0);
+            lcd.write(2);
+        }
+        if (menuSelect == 4){
+          lcd.setCursor(0, 0);
+          lcd.write(1); // writes an empty character to clear 0,0 
+          lcd.setCursor(0,1); 
+          lcd.write(2);  
+          }
+          }
+          if (menuSelect < 3){
+            selectMenu();
+          }
+      }
+
+      if (menuSelect == 0){
+        menuSelect = 4;
       }
       if (digitalRead(SW) == LOW && menuSelect == 1){
         menuOpen = false;
@@ -141,6 +165,8 @@ void selectMenu(){
       }
     }
   }
+}
+  
 
 
 
