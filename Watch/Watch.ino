@@ -6,9 +6,11 @@
 #define DT 3
 #define SW 4
 
-unsigned long initialPress;         // initial start for the timer
-unsigned long noPress;              // time after the button is let go
+unsigned long initial;         // initial start for the timer
+unsigned long lastPress;
+unsigned long stopWatch;              // stopwatch timer 
 const unsigned long period = 2000;  //2 seconds in millisec form
+
 
 uint8_t colourR = 0;
 uint8_t colourG = 0;
@@ -19,6 +21,8 @@ int currentState;
 int lastState;
 
 bool menuOpen = true;
+bool watchRunning = false;
+bool watchMenu = false;
 bool menuR = true;
 bool menuG = true;
 bool menuB = true;
@@ -65,6 +69,7 @@ void setup() {
   delay(1000);
   lcd.clear();
   lastState = digitalRead(CLK);  // reads the initial state of the encoder
+  initial = millis();
 }
 
 void loop() {
@@ -89,9 +94,9 @@ void loop() {
   lcd.print(Date);
 
   while (digitalRead(SW) == LOW) {
-    initialPress = millis();
-    if (digitalRead(SW) == HIGH && initialPress > 2000) {  // calculates the millisecs taken from press to release
-      initialPress = 0;
+    lastPress = millis();
+    if (digitalRead(SW) == HIGH && initial - lastPress > 2000) {  // calculates the millisecs taken from press to release
+      lastPress = 0;
       selectMenu();
      }
     }
@@ -108,6 +113,10 @@ void counterMenu(){
       }
     }
     lastState = currentState;
+    menuSelect = constrain(menuSelect, 0, 5);
+    if (menuSelect == 5){
+      menuSelect = 1;
+    }
 }
 
 void colourVal(){
@@ -120,6 +129,15 @@ void colourVal(){
     }
   }
     lastState = currentState;
+}
+
+void stopwatch(){
+  lcd.clear();
+  while (watchMenu == true){
+    if (digitalRead(SW) == LOW && watchRunning == false){
+      stopWatch = millis();
+    }
+  }
 }
 
 void selectMenu(){
