@@ -9,7 +9,6 @@
 #define LCDWIDTH 16
 #define LCDHEIGHT 2
 
-
 unsigned long initialPress;         // initial start for the timer
 unsigned long noPress;              // time after the button is let go
 const unsigned long period = 2000;  //2 seconds in millisec form
@@ -18,10 +17,6 @@ uint8_t colourR = 0;
 uint8_t colourG = 0;
 uint8_t colourB = 0;
 int lastState;
-
-bool menuR = true;
-bool menuG = true;
-bool menuB = true;
 
 rgb_lcd lcd;
 DS1307 rtc;
@@ -50,7 +45,7 @@ Task doMenu(MenuEntry* menu, size_t num) {
   int ind = 0;
   renderEntry(&menu[ind]);
   bool choosing = true;
-  int laststate = digitalRead(CLK);
+  int lastState = digitalRead(CLK);
   while (choosing) {
     int currentState = digitalRead(CLK);
     if (currentState != lastState) { // Move Event
@@ -60,26 +55,26 @@ Task doMenu(MenuEntry* menu, size_t num) {
           --ind;
         }
       ind = ind % num;
-      renderEntry(&menu[ind]);        
+      renderEntry(&menu[ind]);
+      lastState = currentState;
     }
     if (digitalRead(SW) == LOW) { // Read event
       choosing = false;
-      break; // forcibly break the loop
     }
-    delay(25);
+    delay(50);
   }
   return menu[ind].target;
 }
 /////
 MenuEntry baseMenu[] = {
   MenuEntry{"Set Colours     ",
-            "   or else die! ",
+            "                ",
             &setColour},
   MenuEntry{"Do nothing      ",
-            "Just like your, ",
+            "And Set Colours ",
             &setColour},
   MenuEntry{"Yeet All My RAM ",
-            "Just Do IT      ",
+            "TO Set Colours  ",
             &setColour}
 };
 void setup() {
@@ -95,15 +90,11 @@ void setup() {
   delay(500);
   lcd.clear();
   lastState = digitalRead(CLK);  // reads the initial state of the encoder
-  doMenu(baseMenu, 3);
 }
 
 void loop() {
   //
   // put your main code here, to run repeatedly:
-  menuR = true;
-  menuG = true;
-  menuB = true;  // resets backlight colour menu
   uint8_t sec, min, hour, day, month;
   uint16_t year;
 
@@ -123,7 +114,7 @@ void loop() {
     initialPress = millis();
     if (digitalRead(SW) == HIGH && initialPress > 2000) {  // calculates the millisecs taken from press to release
       initialPress = 0;
-      launchTask(&setColour);
+      launchTask(doMenu(baseMenu, 3));
     }
   }
 }
@@ -131,13 +122,17 @@ void loop() {
 void setColour() {
   lcd.clear();
   uint8_t colourSet = 0;
-  int currentState;
   char Colour[16];
   char R[3];
   char G[3];
   char B[3];
   delay(250);
-  while (menuR == true) {                                       // loop to change the value of R
+  bool menu;
+  int lastState, currentState;
+
+  menu = true;
+  lastState = digitalRead(CLK);
+  while (menu == true) {                                       // loop to change the value of R
     sprintf(Colour, "R%d G%d B%d", colourR, colourG, colourB);  //formats the colour values
     sprintf(R, "%03d", colourSet);
     lcd.setCursor(0, 0);
@@ -158,11 +153,13 @@ void setColour() {
     if (digitalRead(SW) == LOW) {
       colourR = colourSet;
       lcd.setRGB(colourR, colourG, colourB);
-      menuR = false;
+      menu = false;
     }
   }
   delay(250);
-  while (menuG == true) {                                       // loop to change the value of G
+  menu = true;
+  lastState = digitalRead(CLK);
+  while (menu == true) {                                       // loop to change the value of G
     sprintf(Colour, "R%d G%d B%d", colourR, colourG, colourB);  //formats the colour values
     sprintf(G, "%03d", colourSet);
     lcd.setCursor(0, 0);
@@ -183,11 +180,13 @@ void setColour() {
     if (digitalRead(SW) == LOW) {
       colourG = colourSet;
       lcd.setRGB(colourR, colourG, colourB);
-      menuG = false;
+      menu = false;
     }
   }
   delay(250);
-  while (menuB == true) {                                       // loop to change the value of B
+  menu = true;
+  lastState = digitalRead(CLK);
+  while (menu == true) {                                       // loop to change the value of B
     sprintf(Colour, "R%d G%d B%d", colourR, colourG, colourB);  //formats the colour values
     sprintf(B, "%03d", colourSet);
     lcd.setCursor(0, 0);
@@ -208,7 +207,7 @@ void setColour() {
     if (digitalRead(SW) == LOW) {
       colourB = colourSet;
       lcd.setRGB(colourR, colourG, colourB);
-      menuB = false;
+      menu = false;
     }
   }
 }
