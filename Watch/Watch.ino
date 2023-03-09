@@ -1,6 +1,8 @@
 // Somehow written by Juli/ JuliThing (on GH)
+#include <ArduinoLowPower.h>
+#include <StopWatch.h>
 #include <Wire.h>
-#include "rgb_lcd.h"
+#include <rgb_lcd.h>
 #include <DS1307.h>
 #define CLK 2
 #define DT 3
@@ -8,9 +10,7 @@
 
 unsigned long initial;         // initial start for the timer
 unsigned long lastPress;
-unsigned long stopWatch;              // stopwatch timer 
 const unsigned long period = 2000;  //2 seconds in millisec form
-
 
 uint8_t colourR = 0;
 uint8_t colourG = 0;
@@ -20,6 +20,7 @@ uint8_t menuSelect = 1;
 int currentState;
 int lastState;
 
+bool timerStart = false;
 bool menuOpen = true;
 bool watchRunning = false;
 bool watchMenu = false;
@@ -27,9 +28,9 @@ bool menuR = true;
 bool menuG = true;
 bool menuB = true;
 
-
 rgb_lcd lcd;
 DS1307 rtc;
+StopWatch watch;
 
 byte blank[8] = { //creates an arrow icon 
   0b00000,
@@ -70,6 +71,7 @@ void setup() {
   lcd.clear();
   lastState = digitalRead(CLK);  // reads the initial state of the encoder
   initial = millis();
+  LowPower.attachInterruptWakeup(SW, noslep, CHANGE);
 }
 
 void loop() {
@@ -134,10 +136,24 @@ void colourVal(){
 void stopwatch(){
   lcd.clear();
   while (watchMenu == true){
-    if (digitalRead(SW) == LOW && watchRunning == false){
-      stopWatch = millis();
+    if (digitalRead(SW) == LOW && watch.isRunning() == false){ // reads the switch and starts the watch 
+      watch.start();
+    }
+    if (digitalRead(SW) == LOW && watch.isRunning() == true){ // stops the watch if its running and button pressed
+      watch.stop();
     }
   }
+}
+
+void slep(){
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("Zzzz...");
+  LowPower.sleep(); // puts the arduino to sleep
+}
+
+void noslep(){
+  // doesn't contain anything but the low power requires a function
 }
 
 void selectMenu(){
@@ -190,9 +206,15 @@ void selectMenu(){
       if (menuSelect == 0){
         menuSelect = 4;
       }
-      if (digitalRead(SW) == LOW && menuSelect == 1){
+      if (digitalRead(SW) == LOW){
         menuOpen = false;
-        setColour();
+        switch(menuSelect){
+          case 1;
+          setColour
+          break;
+          case 2;
+          
+        }
       }
     }
   }
