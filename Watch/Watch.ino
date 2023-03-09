@@ -1,7 +1,7 @@
 // somehow written by Juli / JuliThing (GH)
-#include <CapacitiveSensor.h>
+#include <CapacitiveSensor.h> //paulstoffregen
 #include <ArduinoLowPower.h>
-#include <StopWatch.h>
+#include <StopWatch.h> // StopWatch_RT
 #include <Wire.h>
 #include <rgb_lcd.h>
 #include <DS1307.h>
@@ -269,16 +269,16 @@ void selectMenu(){
       if (digitalRead(SW) == LOW){
         menuOpen = false;
         switch(menuSelect){
-          case 1;
+          case 1:
           setColour();
           break;
-          case 2;
+          case 2:
           stopwatch();
           break;
-          case 3;
+          case 3:
 
           break;
-          case 4;
+          case 4:
           slep();
           break;
         }
