@@ -19,6 +19,7 @@ rgb_lcd lcd;
 DS1307 rtc;
 
 /////
+// BEFORE LAUNCHING/CLOSING TASKS ADD SOME DELAY TO AVOID BUTTONPRESS CARRYOVER
 using Task = void (*)();
 typedef struct MenuEntry MenuEntry;
 // menu stuffs
@@ -63,16 +64,14 @@ Task doMenu(MenuEntry* menu, size_t num) {
   return menu[ind].target;
 }
 /////
+void texto();
 MenuEntry baseMenu[] = {
   MenuEntry{"Set Colours     ",
             "                ",
             &setColour},
   MenuEntry{"Do nothing      ",
-            "And Set Colours ",
-            &setColour},
-  MenuEntry{"Yeet All My RAM ",
-            "TO Set Colours  ",
-            &setColour}
+            "                ",
+            &texto},
 };
 void setup() {
   // put your setup code here, to run once:
@@ -109,7 +108,7 @@ void loop() {
 
   if (digitalRead(SW) == LOW) {
     delay(250);    
-    launchTask(doMenu(baseMenu, 3));
+    launchTask(doMenu(baseMenu, 2));
   }
 }
 
@@ -119,11 +118,10 @@ void setColour() {
   static char Colour[16];
   static char buff[] = "Set X: XXX";
   static const char targ[3] = {'R', 'G', 'B'};
-  uint8_t cols[3] = {0};
+  static uint8_t cols[3] = {0};
   bool menu;
   int lastState, currentState;
   for (int ind=0; ind < 3; ++ind) {
-    delay(250);
     menu = true;
     lastState = digitalRead(CLK);
     while (menu == true) {
@@ -150,4 +148,11 @@ void setColour() {
     }
   delay(250);
   }
+}
+
+void texto() {
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("YabbaDabbaDoo");
+  while (digitalRead(SW) == HIGH) delay(50);
 }
