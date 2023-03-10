@@ -218,7 +218,7 @@ void stopwatch(){
   delay(200);
   lcd.clear();
   while (watchMenu == true){
-    touchButton();
+    //touchButton();
     uint32_t timeElapsed = watch.elapsed();
     uint16_t millisecs = watch.elapsed();
     millisecs = constrain(millisecs, 0, 1000);
@@ -246,7 +246,6 @@ void stopwatch(){
       lastCapPress = 0;
     }
   }
-}
 }
 
 void slep(){
