@@ -5,7 +5,7 @@
 #include <Wire.h>
 #include <rgb_lcd.h>
 #include <DS1307.h>
-#define CLK 3
+#define CLK 3 // wiring changed
 #define DT 4
 #define SW 2
 #define Buzzer 5
