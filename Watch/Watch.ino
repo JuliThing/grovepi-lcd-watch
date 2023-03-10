@@ -1,5 +1,5 @@
 // somehow written by Juli / JuliThing (GH)
-#include <CapacitiveSensor.h> //paulstoffregen
+//#include <CapacitiveSensor.h> //paulstoffregen //Experimental
 #include <ArduinoLowPower.h>
 #include <StopWatch.h> // StopWatch_RT
 #include <Wire.h>
@@ -8,9 +8,11 @@
 #define CLK 3
 #define DT 4
 #define SW 2
+#define Buzzer 5
 
 unsigned long initial;         // initial start for the timer
 unsigned long lastPress;
+unsigned long lastCapPress;
 long capButton; //assigns the capacitive button var
 const unsigned long period = 2000;  //2 seconds in millisec form
 volatile int sleepCount = 1;
@@ -34,7 +36,7 @@ bool menuB = true;
 rgb_lcd lcd;
 DS1307 rtc;
 StopWatch watch;
-CapacitiveSensor cs_11_9 = CapacitiveSensor(11,9); //sets pin 9 as the capacitive sensor pin
+//CapacitiveSensor cs_11_9 = CapacitiveSensor(11,9); //sets pin 9 as the capacitive sensor pin //Experimental
 
 byte blank[8] = { //creates an arrow icon 
   0b00000,
@@ -60,6 +62,8 @@ byte arrow[8] = { //creates an arrow icon
 
 void setup() {
   // put your setup code here, to run once:
+  //cs_11_9.set_CS_AutocaL_Millis(0xFFFFFFFF);  //Calibrate the sensor // Experimental capacitive sensor
+  pinMode(Buzzer, OUTPUT);
   pinMode(CLK, INPUT);
   pinMode(DT, INPUT);
   pinMode(SW, INPUT_PULLUP);
@@ -109,17 +113,24 @@ void loop() {
   }
 
 
-void touchButton(){
-  capButton = cs_11_9.capacitiveSensor(30); // capacitance of the button
-}
+//void touchButton(){
+//  cs_11_9.set_CS_AutocaL_Millis(0xFFFFFFFF);  //Calibrate the sensor...
+//  capButton = cs_11_9.capacitiveSensor(30); // capacitance of the button
+//} //Experimental 
 
 void counterMenu(){
   currentState = digitalRead(CLK);                       // Current state of the encoder
     if (currentState != lastState && currentState == 1) {  // compares it once not to have ultra stroke mode
       if (digitalRead(DT) != currentState) {
         menuSelect++;
+        tone(Buzzer, 400);
+        delay(50);
+        noTone(Buzzer);
       } else {
         menuSelect--;
+        tone(Buzzer, 400);
+        delay(50);
+        noTone(Buzzer);
       }
     }
     lastState = currentState;
@@ -204,6 +215,7 @@ void setColour() {
 }
 
 void stopwatch(){
+  delay(200);
   lcd.clear();
   while (watchMenu == true){
     touchButton();
@@ -211,19 +223,30 @@ void stopwatch(){
     uint16_t millisecs = watch.elapsed();
     millisecs = constrain(millisecs, 0, 1000);
     lcd.setCursor(0,0);
-    lcd.print(millisecs);
-    if (digitalRead(SW) == LOW && watch.isRunning() == false){ // reads the switch and starts the watch 
-      watch.start();
-      delay(50);
-    }
-    if (digitalRead(SW) == LOW && watch.isRunning() == true){ // stops the watch if its running and button pressed
+    lcd.print(timeElapsed);
+    lcd.setCursor(0,1);
+    lcd.print(capButton);
+    /*while (capButton > 180){ // reads the switch and starts the watch
+    touchButton();
+    if (watch.isRunning() == true){
+        watch.start();
+        delay(20);
+    } else{
       watch.stop();
-      delay(50);
-    }
-    if (capButton > 150 && watch.isRunning() == false){
+      delay(20);
+    }*///Experimental/ Don't use Stopwatch as it is broken 
+  }
+  while (digitalRead(SW) == LOW && watch.isRunning() == false){
+    lastCapPress = millis();
+    if (digitalRead(SW) == HIGH && initial - lastCapPress > 2000){
       watch.reset();
+      watchMenu = false;
+    } else{
+      watch.reset();
+      lastCapPress = 0;
     }
   }
+}
 }
 
 void slep(){
@@ -231,7 +254,7 @@ void slep(){
   lcd.setCursor(0,0);
   lcd.print("Zzzz...");
   delay(300);
-  LowPower.deepSleep(); // puts the arduino to sleep^2
+  LowPower.deepSleep(); // puts the arduino to sleep^2 works as expected
 }
 
 void noslep(){
