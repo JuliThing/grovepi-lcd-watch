@@ -11,6 +11,7 @@
 
 unsigned long initial;         // initial start for the timer
 unsigned long lastPress;
+long capButton; //assigns the capacitive button var
 const unsigned long period = 2000;  //2 seconds in millisec form
 volatile int sleepCount = 1;
 
@@ -85,7 +86,6 @@ void loop() {
   menuB = true;  // resets backlight colour menu
   uint8_t sec, min, hour, day, month;
   uint16_t year;
-  long capButton = cs_11_9.capacitiveSensor(30); // capacitance of the button
 
   //get time from RTC
   rtc.get(&sec, &min, &hour, &day, &month, &year);
@@ -108,6 +108,10 @@ void loop() {
     }
   }
 
+
+void touchButton(){
+  capButton = cs_11_9.capacitiveSensor(30); // capacitance of the button
+}
 
 void counterMenu(){
   currentState = digitalRead(CLK);                       // Current state of the encoder
@@ -202,11 +206,22 @@ void setColour() {
 void stopwatch(){
   lcd.clear();
   while (watchMenu == true){
+    touchButton();
+    uint32_t timeElapsed = watch.elapsed();
+    uint16_t millisecs = watch.elapsed();
+    millisecs = constrain(millisecs, 0, 1000);
+    lcd.setCursor(0,0);
+    lcd.print(millisecs);
     if (digitalRead(SW) == LOW && watch.isRunning() == false){ // reads the switch and starts the watch 
       watch.start();
+      delay(50);
     }
     if (digitalRead(SW) == LOW && watch.isRunning() == true){ // stops the watch if its running and button pressed
       watch.stop();
+      delay(50);
+    }
+    if (capButton > 150 && watch.isRunning() == false){
+      watch.reset();
     }
   }
 }
@@ -279,6 +294,7 @@ void selectMenu(){
         setColour();
         break;
         case 2:
+        watchMenu = true;
         stopwatch();
         break;
         case 3:
