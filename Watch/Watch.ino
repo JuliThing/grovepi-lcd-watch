@@ -29,9 +29,6 @@ bool timerStart = false;
 bool menuOpen = true;
 bool watchRunning = false;
 bool watchMenu = false;
-bool menuR = true;
-bool menuG = true;
-bool menuB = true;
 
 rgb_lcd lcd;
 DS1307 rtc;
@@ -85,9 +82,6 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   menuOpen = true;
-  menuR = true;
-  menuG = true;
-  menuB = true;  // resets backlight colour menu
   uint8_t sec, min, hour, day, month;
   uint16_t year;
 
@@ -162,7 +156,10 @@ void setColour() {
   char G[3];
   char B[3];
   delay(250);
-  while (menuR == true) {                                       // loop to change the value of R
+
+  bool menu = true;
+
+  while (menu == true) {                                       // loop to change the value of R
     sprintf(Colour, "R%d G%d B%d", colourR, colourG, colourB);  //formats the colour values
     sprintf(R, "%03d", colourSet);
     lcd.setCursor(0, 0);
@@ -175,11 +172,12 @@ void setColour() {
     if (digitalRead(SW) == LOW) {
       colourR = colourSet;
       lcd.setRGB(colourR, colourG, colourB);
-      menuR = false;
+      menu = false;
     }
   }
   delay(250);
-  while (menuG == true) {                                       // loop to change the value of G
+  menu = true;
+  while (menu == true) {                                       // loop to change the value of G
     sprintf(Colour, "R%d G%d B%d", colourR, colourG, colourB);  //formats the colour values
     sprintf(G, "%03d", colourSet);
     lcd.setCursor(0, 0);
@@ -192,11 +190,12 @@ void setColour() {
     if (digitalRead(SW) == LOW) {
       colourG = colourSet;
       lcd.setRGB(colourR, colourG, colourB);
-      menuG = false;
+      menu = false;
     }
   }
   delay(250);
-  while (menuB == true) {                                       // loop to change the value of B
+  menu = true;
+  while (menu == true) {                                       // loop to change the value of B
     sprintf(Colour, "R%d G%d B%d", colourR, colourG, colourB);  //formats the colour values
     sprintf(B, "%03d", colourSet);
     lcd.setCursor(0, 0);
@@ -209,7 +208,7 @@ void setColour() {
     if (digitalRead(SW) == LOW) {
       colourB = colourSet;
       lcd.setRGB(colourR, colourG, colourB);
-      menuB = false;
+      menu = false;
     }
   }
 }
