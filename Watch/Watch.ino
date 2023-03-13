@@ -118,6 +118,7 @@ void loop() {
 //  capButton = cs_11_9.capacitiveSensor(30); // capacitance of the button
 //} //Experimental 
 
+/***********************Menu Counter***********************/
 void counterMenu(){
   currentState = digitalRead(CLK);                       // Current state of the encoder
     if (currentState != lastState && currentState == 1) {  // compares it once not to have ultra stroke mode
@@ -134,12 +135,12 @@ void counterMenu(){
       }
     }
     lastState = currentState;
-    menuSelect = constrain(menuSelect, 0, 5);
-    if (menuSelect == 5){
+    menuSelect = constrain(menuSelect, 0, 7);
+    if (menuSelect == 7){
       menuSelect = 1;
     }
     if (menuSelect == 0){
-        menuSelect = 4;
+        menuSelect = 6;
     }
 }
 
@@ -154,7 +155,8 @@ void colourVal(){
   }
     lastState = currentState;
 }
-
+/*******************************************************************/
+/************************Backlight Menu*****************************/
 void setColour() {
   lcd.clear();
   char Colour[16];
@@ -213,7 +215,8 @@ void setColour() {
     }
   }
 }
-
+/**************************************************************************/
+/*****************************StopWatch************************************/
 void stopwatch(){
   delay(200);
   lcd.clear();
@@ -248,7 +251,8 @@ void stopwatch(){
   }
 }
 
-
+/*********************************************************************/
+/*****************************Sleep Mode******************************/
 void slep(){
   lcd.clear();
   lcd.setCursor(0,0);
@@ -261,6 +265,8 @@ void noslep(){
   sleepCount ++; //idk why
 }
 
+/********************************************************************/
+/*******************************Menu********************************/
 void menu1(){
   lcd.setCursor(1,0);
   lcd.print("Colour Set");
@@ -274,7 +280,19 @@ void menu2(){
   lcd.setCursor(1,1);
   lcd.print("Sleep     ");
 }
+void menu3(){
+  lcd.setCursor(1,0);
+  lcd.print("Bad USB   ");
+  lcd.setCursor(1,1);
+  lcd.print("          ");
+}
 
+void menu4(){
+  lcd.setCursor(1,0);
+  lcd.print("Colour Set");
+  lcd.setCursor(1,1);
+  lcd.print("Stop Watch");
+}
 
 void selectMenu(){
   lcd.clear();
@@ -308,6 +326,20 @@ void selectMenu(){
       lcd.write(1); // writes an empty character to clear 0,0 
       lcd.setCursor(0,1); 
       lcd.write(2);  
+      break;
+      case 5:
+      menu3();
+      lcd.setCursor(0, 1);
+      lcd.write(1); // writes an empty character to clear 0,1
+      lcd.setCursor(0, 0);
+      lcd.write(2);
+      break;
+      case 6:
+      menu3();
+      lcd.setCursor(0, 0);
+      lcd.write(1); // writes an empty character to clear 0,0 
+      lcd.setCursor(0,1); 
+      lcd.write(2);  
       break;    
     }
     if (digitalRead(SW) == LOW){
@@ -324,6 +356,12 @@ void selectMenu(){
         break;
         case 4:
         slep();
+        break;
+        case 5:
+
+        break;
+        case 6:
+        
         break;
       }
     }
